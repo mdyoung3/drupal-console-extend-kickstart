@@ -1,0 +1,21 @@
+{
+    "name": "asu-rtd/console-extend-kickstart",
+    "description": "Provides a Drupal console command to set up RTD sites.",
+    "type": "drupal-console-library",
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "Maximo Mena",
+            "email": "mmenavas@asu.edu"
+        }
+    ],
+    "require": {},
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {"Drupal\\Console\\Kickstart\\": "src"}
+    },
+    "require-dev": {
+        "drupal/console-core": "~1.0"
+    }
+}
