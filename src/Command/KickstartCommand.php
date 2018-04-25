@@ -18,40 +18,37 @@ use Drupal\Console\Core\Style\DrupalStyle;
  *
  * @package Drupal\Console\Kickstart\Command
  */
-class KickstartCommand extends Command
-{
-    use CommandTrait;
-    /**
-     * {@inheritdoc}
-     */
+class KickstartCommand extends Command {
 
-    /**
-     * ExampleCommand constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+  use CommandTrait;
 
-    protected function configure()
-    {
-        $this->setName('extend:rtd:kickstart')
-            ->setDescription('Set un RTD site.');
-    }
+  /**
+   * {@inheritdoc}
+   */
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-    }
+  /**
+   * ExampleCommand constructor.
+   */
+  public function __construct() {
+    parent::__construct();
+  }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $io = new DrupalStyle($input, $output);
-        $io->commentBlock('RTD Kickstart command.');
-    }
+  protected function configure() {
+    $this->setName('extend:rtd:kickstart')
+      ->setDescription('Set un RTD site.');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function interact(InputInterface $input, OutputInterface $output) {
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function execute(InputInterface $input, OutputInterface $output) {
+    $io = new DrupalStyle($input, $output);
+    $io->commentBlock('RTD Kickstart command.');
+  }
 }
