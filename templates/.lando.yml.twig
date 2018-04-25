@@ -1,0 +1,11 @@
+# ENV
+name: {{ site_name }}
+recipe: drupal8
+config:
+  webroot: web
+  php: '7.0'
+  drupal: true
+  xdebug: true
+proxy:
+  appserver:
+    - dev-{{ site_name }}.asu.edu

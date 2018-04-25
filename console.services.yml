@@ -1,5 +1,10 @@
 services:
   console.extend_kickstart:
     class: \Drupal\Console\Kickstart\Command\KickstartCommand
+    arguments: ['@console.extend_kickstart_generator']
     tags:
       - { name: drupal.command, bootstrap: uninstall }
+  console.extend_kickstart_generator:
+    class: Drupal\Console\Kickstart\Generator\KickstartGenerator
+    tags:
+      - { name: drupal.generator, bootstrap: uninstall }
