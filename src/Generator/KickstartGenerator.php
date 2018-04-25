@@ -26,7 +26,7 @@ class KickstartGenerator extends Generator
     $siteInfo = $parameters['site_info'];
     $fs = new Filesystem();
 
-    if (!$fs->exists($siteInfo['site_name'])) {
+    if ($fs->exists($siteInfo['site_name'])) {
       $io->error("The {$siteInfo['site_name']} directory already exists.");
       return;
     }

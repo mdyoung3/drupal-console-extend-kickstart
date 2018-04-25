@@ -8,6 +8,7 @@
 namespace Drupal\Console\Kickstart\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Command\Command;
 use Drupal\Console\Core\Command\Shared\CommandTrait;
@@ -19,7 +20,6 @@ use Drupal\Console\Kickstart\Generator\KickstartGenerator;
  *
  * TODO: Perform the following actions:
  * - Generate .lando file
- * - Install drupal-composer
  * - Generate drush site aliases
  * - Generate README
  *
@@ -33,22 +33,13 @@ class KickstartCommand extends Command {
    * {@inheritdoc}
    */
 
-
   /**
    * @var KickstartGenerator
    */
   protected $generator;
 
-  private $siteInfo = [
-    'site_name' => [
-      'prompt' => 'Enter site name',
-      'filter' => 'enforce_alphanumeric',
-      'value'  => 'mysite',
-    ]
-  ];
-
   /**
-   * ExampleCommand constructor.
+   * KickstartCommand constructor.
    */
   public function __construct(KickstartGenerator $generator) {
     $this->generator = $generator;
@@ -57,7 +48,12 @@ class KickstartCommand extends Command {
 
   protected function configure() {
     $this->setName('extend:rtd:kickstart')
-      ->setDescription('Set un RTD site.');
+      ->setDescription('Set un RTD site.')
+      ->addOption(
+        'site-name',
+        null,
+        InputOption::VALUE_REQUIRED
+      );
   }
 
   /**
@@ -65,10 +61,17 @@ class KickstartCommand extends Command {
    */
   protected function interact(InputInterface $input, OutputInterface $output) {
     $io = new DrupalStyle($input, $output);
-    foreach ($this->siteInfo as $key => $attributes) {
-      $raw_value = $io->ask($attributes['prompt'], $attributes['value']);
-      $this->siteInfo[$key]['value'] = $this->enforce_alphanumeric($raw_value);
+
+    $option = 'site-name';
+    $prompt = 'Enter site name';
+    if (!empty($input->getOption($option))) {
+      $raw_value = $input->getOption($option);
     }
+    else {
+      $raw_value = $io->ask($prompt, 'mysite');
+    }
+    $input->setOption($option, $this->enforce_alphanumeric($raw_value));
+
   }
 
   /**
@@ -79,13 +82,13 @@ class KickstartCommand extends Command {
 
     $this->generator->addSkeletonDir( __DIR__ . '/../../templates');
 
+    $siteInfo = [];
+    $siteInfo['site_name'] = $input->getOption('site-name');
+
     $this->generator->generate([
       'io' => $io,
-      'site_info' => $this->siteInfo,
+      'site_info' => $siteInfo,
     ]);
-
-//    $io->commentBlock('Site Name: ' . $this->siteInfo['site_name']['value']);
-
   }
 
   /**
