@@ -1,5 +1,5 @@
 services:
   console.extend_kickstart:
-    class: \Drupal\Console\Kickstart\Command\KickstartCommand.php
+    class: \Drupal\Console\Kickstart\Command\KickstartCommand
     tags:
       - { name: drupal.command, bootstrap: uninstall }
