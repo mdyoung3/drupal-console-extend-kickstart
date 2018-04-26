@@ -1,0 +1,41 @@
+# How to use
+# rtd:new-site --site_name=mysite --repo=git@github.com:drupal-composer/drupal-project.git
+command:
+  name: rtd:new-site
+  description: 'Create a new Drupal site and set up local environments.'
+vars:
+  site_name: mysite
+  repo: git@github.com:drupal-composer/drupal-project.git
+  qa_user: none
+  qa_url: none
+  prod_user: none
+  prod_url: none
+commands:
+  # Install Drupal composer template
+  - command: exec
+    arguments:
+      bin: git clone {{ repo }} {{ site_name }}
+  # set up .lando.yml
+  - command: rtd:kickstart
+    options:
+     site_name: '{{site_name}}'
+     qa_user: '{{qa_user}}'
+     qa_url: '{{qa_url}}'
+     prod_user: '{{prod_user}}'
+     prod_url: '{{prod_url}}'
+  # Start lando
+  - command: exec
+    arguments:
+      bin: cd {{ site_name }} && lando start
+  # Fetch site dependencies
+#  - command: exec
+#    arguments:
+#      bin: cd {{ site_name }} && lando composer install
+  # Install Drupal
+#  - command: exec
+#    arguments:
+#      bin: cd {{ site_name }} && lando drupal site:install  standard --db-type='mysql' --db-host='database' --db-name='drupal8' --db-user='drupal8' --db-pass='drupal8' --db-port=3306 --site-name='{{ site_name }}' --site-mail='rtd.web@asu.edu' --account-name='ovprea' --account-mail='rtd.web@asu.edu'
+  # Install addition packages: asu_brand, rtd_ldap, bootstrap theme, etc
+#  - command: exec
+#    arguments:
+#      bin: cd {{ site_name }} && lando composer require drupal/bootstrap

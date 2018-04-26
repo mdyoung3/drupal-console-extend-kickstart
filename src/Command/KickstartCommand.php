@@ -39,6 +39,42 @@ class KickstartCommand extends Command {
   protected $generator;
 
   /**
+   * @var array
+   */
+  private $siteInfo = [
+    'site_name' => [
+      'prompt' => 'Enter site name',
+      'filter' => 'enforce_alphanumeric',
+      'value'  => '',
+      'required'  => TRUE,
+    ],
+    'qa_url' => [
+      'prompt' => 'Enter QA URL',
+      'filter' => 'validateUrl',
+      'value'  => '',
+      'required'  => FALSE,
+    ],
+    'qa_user' => [
+      'prompt' => 'Enter QA user.',
+      'filter' => 'enforce_alphanumeric',
+      'value'  => '',
+      'required'  => FALSE,
+    ],
+    'prod_url' => [
+      'prompt' => 'Enter Prod URL',
+      'filter' => 'validateUrl',
+      'value'  => '',
+      'required'  => FALSE,
+    ],
+    'prod_user' => [
+      'prompt' => 'Enter Prod user.',
+      'filter' => 'enforce_alphanumeric',
+      'value'  => '',
+      'required'  => FALSE,
+    ],
+  ];
+
+  /**
    * KickstartCommand constructor.
    */
   public function __construct(KickstartGenerator $generator) {
@@ -47,12 +83,14 @@ class KickstartCommand extends Command {
   }
 
   protected function configure() {
-    $this->setName('extend:rtd:kickstart')
-      ->setDescription('Set un RTD site.')
-      ->addOption(
-        'site-name',
+    $this->setName('rtd:kickstart')
+      ->setDescription('Set un RTD site.');
+
+    foreach ($this->siteInfo as $option=>$props)
+      $this->addOption(
+        $option,
         null,
-        InputOption::VALUE_REQUIRED
+        $props['required'] ? InputOption::VALUE_REQUIRED : InputOption::VALUE_OPTIONAL
       );
   }
 
@@ -62,15 +100,15 @@ class KickstartCommand extends Command {
   protected function interact(InputInterface $input, OutputInterface $output) {
     $io = new DrupalStyle($input, $output);
 
-    $option = 'site-name';
-    $prompt = 'Enter site name';
-    if (!empty($input->getOption($option))) {
-      $raw_value = $input->getOption($option);
+    foreach ($this->siteInfo as $option=>$props) {
+      if (!empty($input->getOption($option))) {
+        $rawValue = $input->getOption($option);
+      }
+      else {
+        $rawValue = $io->ask($props['prompt']);
+      }
+      $input->setOption($option, $this->$props['filter']($rawValue));
     }
-    else {
-      $raw_value = $io->ask($prompt, 'mysite');
-    }
-    $input->setOption($option, $this->enforce_alphanumeric($raw_value));
 
   }
 
@@ -83,7 +121,9 @@ class KickstartCommand extends Command {
     $this->generator->addSkeletonDir( __DIR__ . '/../../templates');
 
     $siteInfo = [];
-    $siteInfo['site_name'] = $input->getOption('site-name');
+    foreach ($this->siteInfo as $option=>$props) {
+      $siteInfo[$option] = $input->getOption($option);
+    }
 
     $this->generator->generate([
       'io' => $io,
@@ -93,9 +133,24 @@ class KickstartCommand extends Command {
 
   /**
    * Make sure string only contains alphanumeric characters.
+   *
+   * @param $string
+   *
+   * @return string
    */
   protected function enforce_alphanumeric($string) {
     $string = preg_replace("/[^A-Za-z0-9 ]/", '', $string);
     return strtolower($string);
+  }
+
+  /**
+   * Make sure URL is valid; otherwise, return blank.
+   *
+   * @param $url
+   *
+   * @return string
+   */
+  protected function validateUrl($url) {
+    return filter_var($url, FILTER_VALIDATE_URL) ? $url : '';
   }
 }

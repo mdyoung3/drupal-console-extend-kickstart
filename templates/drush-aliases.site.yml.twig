@@ -1,0 +1,13 @@
+local:
+  root: /app/web
+  uri: https://dev-{{ site_name }}.asu.edu
+qa:
+  host: qa.rtd.asu.edu
+  root: /home/{{ qa_user }}/public_html
+  uri: {{ qa_url }}
+  user: {{ qa_user }}
+prod:
+  host: prod.rtd.asu.edu
+  root: /home/{{ prod_user }}/public_html
+  uri: {{ prod_url }}
+  user: {{ prod_user }}
